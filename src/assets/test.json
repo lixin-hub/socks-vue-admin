@@ -1,0 +1,17 @@
+{
+  "page": null,
+  "code": 200,
+  "data": {
+    "page": null,
+    "updateTime": null,
+    "createTime": "1969-12-31 04:00:00",
+    "status": "0",
+    "level": "0",
+    "parent": "0",
+    "children": null,
+    "id": "1",
+    "name": "男士"
+  },
+  "message": "2022-11-16T12:19:11.711+00:00",
+  "status": true
+}
