@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       queryInfo: {
+        query: "",
         page: {
           current: 1,
           size: 10
@@ -77,15 +78,17 @@ export default {
   methods: {
     // 根据分页获取对应的商品列表
     async getGoodsList() {
-      const {data,status} = await this.$http.post('http://localhost:8085/good/page', {
-       page:this.queryInfo.page
+      const {data, status} = await this.$http.post('http://localhost:8085/good/page', {
+        goodName: this.queryInfo.query,
+        queryType:"like",//模糊查询
+        page: this.queryInfo.page
       })
       console.log(data)
-      if (status!==200) {
+      if (status !== 200) {
         return this.$message.error('获取商品列表失败！')
       }
       this.goodsList = data.page.records
-      this.total =data.page.total
+      this.total = data.page.total
     },
     handleSizeChange(newSize) {
       this.queryInfo.size = newSize
