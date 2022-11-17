@@ -272,13 +272,14 @@ export default {
         return this.$message.error('获取父级分类失败！')
       }
       this.parentCateList = res.page.records
-      this.parentCateList.unshift({name: "根", parent: 0, level: 0})
+      this.parentCateList.unshift({id:0,name: "根", parent: 0, level: 0})
 
     },
     // 添加分类 选择项发生变化触发
     parentCateChanged() {
       // 如何selectKeys 数组的长度>0 说明选中父级分类
       if (this.selectedKeys.length > 0) {
+        console.log(this.selectedKeys)
         // 父级分类的Id
         this.addCateForm.parent = this.selectedKeys[this.selectedKeys.length - 1]
         // 当前分类的等级
