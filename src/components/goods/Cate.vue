@@ -21,30 +21,34 @@
           :selection-type="false"
           :show-row-hover="false"
           border
+          :stripe="true"
           class="treeTable"
           index-text="#"
           show-index
       >
-        <!-- 是否有效 -->
-        <template slot="isOk" slot-scope="scope">
-          <i
-              v-if="scope.row.status === '0'"
-              class="el-icon-success"
-              style="color: lightgreen"
-          ></i>
+        <!-- 备注 -->
+        <template  slot="note" slot-scope="scope">
+          <label >{{ scope.row.note }}</label>
         </template>
         <!-- 排序 -->
-        <template slot="level" slot-scope="scope">
+        <template slot="level" slot-scope="scope" >
           <el-tag v-if="scope.row.level === '0'" size="mini">一级</el-tag>
           <el-tag v-else-if="scope.row.level === '1'" size="mini" type="success">二级</el-tag>
           <el-tag v-else size="mini" type="warning">三级</el-tag>
         </template>
+        <template slot="createTime" slot-scope="scope">
+          <label >{{scope.row.createTime | dataFormat}}</label>
+        </template>
+        <template slot="updateTime" slot-scope="scope">
+          <label>{{scope.row.updateTime|dataFormat}}</label>
+        </template>
+
         <!-- 操作 -->
         <template slot="opt" slot-scope="scope">
-          <el-button icon="el-icon-edit" size="mini" type="primary" @click="showEditCateDialog(scope.row.id)">编辑
-          </el-button>
-          <el-button icon="el-icon-delete" size="mini" type="danger" @click="removeCate(scope.row.id)">删除
-          </el-button>
+          <div  class="ed-op">
+            <el-button icon="el-icon-edit" size="mini" type="primary" @click="showEditCateDialog(scope.row.id)">编辑</el-button>
+            <el-button icon="el-icon-delete" size="mini" type="danger" @click="removeCate(scope.row.id)">删除</el-button>
+          </div  >
         </template>
       </tree-table>
       <!-- 分页 -->
@@ -99,6 +103,22 @@
         <el-form-item label="分类名称：" prop="name">
           <el-input v-model="editCateForm.name"></el-input>
         </el-form-item>
+        <el-form-item label="备注：" prop="note">
+          <el-input v-model="editCateForm.note"></el-input>
+        </el-form-item>
+        <el-form-item label="父级分类：">
+          <!-- options：数据源 -->
+          <!-- props：指定配置对象 -->
+          <el-cascader
+              v-model="selectedKeys"
+              :options="parentCateList"
+              :props="cascaderProps"
+              clearable
+              filterable
+              style="width: 100%"
+              @change="parentCateChanged"
+          ></el-cascader>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editCateDialogVisible = false">取 消</el-button>
@@ -130,16 +150,26 @@ export default {
           prop: 'name'
         },
         {
-          label: '是否有效',
+          label: '备注',
           // 当前列 自定义模板
           type: 'template',
-          template: 'isOk'
+          template: 'note'
         },
         {
           label: '排序',
           // 当前列 自定义模板
           type: 'template',
           template: 'level'
+        },{
+          label: '创建时间',
+          // 当前列 自定义模板
+          type: 'template',
+          template: 'createTime'
+        },{
+          label: '更新时间',
+          // 当前列 自定义模板
+          type: 'template',
+          template: 'updateTime'
         },
         {
           label: '操作',
@@ -174,7 +204,7 @@ export default {
         value: 'id',
         label: 'name',
         children: 'children',
-        checkStrictly:'true'
+        checkStrictly: 'true'
 
       },
       // 选中的父级Id数组
@@ -188,7 +218,12 @@ export default {
         ]
       },
       // 编辑表单 绑定对象
-      editCateForm: ''
+      editCateForm: {
+        parent: "",
+        name: '',
+        note: '',
+        level: '',
+      }
     }
   },
   created() {
@@ -228,15 +263,17 @@ export default {
     // 获取父级分类的数据
     async getParentCateList() {
       const {data: res} = await this.$http.post('http://localhost:8085/good/category/page', {
-        page:{
-          size:1000,
-          current:1
+        page: {
+          size: 1000,
+          current: 1
         }
       })
       if (!res.status) {
         return this.$message.error('获取父级分类失败！')
       }
       this.parentCateList = res.page.records
+      this.parentCateList.unshift({name: "根", parent: 0, level: 0})
+
     },
     // 添加分类 选择项发生变化触发
     parentCateChanged() {
@@ -246,6 +283,8 @@ export default {
         this.addCateForm.parent = this.selectedKeys[this.selectedKeys.length - 1]
         // 当前分类的等级
         this.addCateForm.level = this.selectedKeys.length
+        this.editCateForm.level = this.selectedKeys.length
+        this.editCateForm.parent = this.addCateForm.parent
         return 0
       } else {
         // 父级分类的Id
@@ -254,6 +293,7 @@ export default {
         this.addCateForm.level = 0
       }
     },
+
     // 添加分类
     addCate() {
       this.$refs.addCateFormRef.validate(async valid => {
@@ -296,7 +336,9 @@ export default {
     async showEditCateDialog(id) {
       const {data: res} = await this.$http.get('http://localhost:8085/good/category/' + id)
       if (!res.status) return this.$message.error('获取分类失败！')
+      await this.getParentCateList()
       this.editCateForm = res.data
+      this.selectedKeys = this.editCateForm.parent
       this.editCateDialogVisible = true
     },
     // 编辑分类名
@@ -305,8 +347,11 @@ export default {
         if (!valid) return
         const {data: res} = await this.$http.post('http://localhost:8085/good/category/updateById',
             {
-              id:this.editCateForm.id,
-              name: this.editCateForm.name
+              id: this.editCateForm.id,
+              name: this.editCateForm.name,
+              parent: this.editCateForm.parent,
+              note: this.editCateForm.not,
+              level: this.editCateForm.level
             })
         if (!res.status) return this.$message.error('更新分类名失败！')
         this.$message.success('更新分类名成功！')
@@ -322,7 +367,13 @@ export default {
 .treeTable {
   margin-top: 20px;
 }
+.ed-op{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 
+}
 // .el-cascader {
 //   width: 100%;
 // }
