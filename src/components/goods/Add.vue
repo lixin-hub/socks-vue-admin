@@ -55,38 +55,38 @@
               ></el-cascader>
             </el-form-item>
           </el-tab-pane>
-          <!--          <el-tab-pane label="商品参数" name="1">-->
-          <!--            &lt;!&ndash; 渲染表单的Item项 &ndash;&gt;-->
-          <!--            <el-form-item-->
-          <!--                v-for="item in manyTableData-->
-          <!--            "-->
-          <!--                :key="item.attr_id"-->
-          <!--                :label="item.attr_name"-->
-          <!--            >-->
-          <!--              &lt;!&ndash; 复选框组 &ndash;&gt;-->
-          <!--              <el-checkbox-group v-model="item.attr_vals">-->
-          <!--                <el-checkbox :label="cb" v-for="(cb, i) in item.attr_vals" :key="i" border></el-checkbox>-->
-          <!--              </el-checkbox-group>-->
-          <!--            </el-form-item>-->
-          <!--          </el-tab-pane>-->
-          <!--          <el-tab-pane label="商品属性" name="2">-->
-          <!--            <el-form-item :label="item.attr_name" v-for="item in onlyTableData" :key="item.attr_id">-->
-          <!--              <el-input v-model="item.attr_vals"></el-input>-->
-          <!--            </el-form-item>-->
-          <!--          </el-tab-pane>-->
-          <!--          <el-tab-pane label="商品图片" name="3">-->
-          <!--            &lt;!&ndash; action: 图片上传的API接口地址 &ndash;&gt;-->
-          <!--            <el-upload-->
-          <!--                :action="uploadURL"-->
-          <!--                :on-preview="handlePreview"-->
-          <!--                :on-remove="handleRemove"-->
-          <!--                :headers="headerObj"-->
-          <!--                list-type="picture"-->
-          <!--                :on-success="handleSuccess"-->
-          <!--            >-->
-          <!--              <el-button size="small" type="primary">点击上传</el-button>-->
-          <!--            </el-upload>-->
-          <!--          </el-tab-pane>-->
+                    <el-tab-pane label="商品参数" name="1">
+                      <!-- 渲染表单的Item项 -->
+                      <el-form-item
+                          v-for="item in manyTableData
+                      "
+                          :key="item.id"
+                          :label="item.name"
+                      >
+                        <!-- 复选框组 -->
+                        <el-checkbox-group v-model="item.value">
+                          <el-checkbox :label="cb" v-for="(cb, i) in item.value" :key="i" border></el-checkbox>
+                        </el-checkbox-group>
+                      </el-form-item>
+                    </el-tab-pane>
+                    <el-tab-pane label="商品属性" name="2">
+                      <el-form-item :label="item.name" v-for="item in onlyTableData" :key="item.id">
+                        <el-input v-model="item.value"></el-input>
+                      </el-form-item>
+                    </el-tab-pane>
+                    <el-tab-pane label="商品图片" name="3">
+                      <!-- action: 图片上传的API接口地址 -->
+                      <el-upload
+                          :action="uploadURL"
+                          :on-preview="handlePreview"
+                          :on-remove="handleRemove"
+                          :headers="headerObj"
+                          list-type="picture"
+                          :on-success="handleSuccess"
+                      >
+                        <el-button size="small" type="primary">点击上传</el-button>
+                      </el-upload>
+                    </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">
             <!-- 富文本编辑器 -->
             <quill-editor v-model="addForm.goodIntroduce"></quill-editor>
@@ -122,7 +122,7 @@ export default {
         pic: "",
         // 商品详情描述
         goodsIntroduce: '',
-        // attrs: []
+        attrs: []
       },
       addFormRules: {
         goodName: [
@@ -207,28 +207,22 @@ export default {
       // 访问动态参数面板
       if (this.activeIndex === '1') {
         const {data: res} = await this.$http.get(
-            `categories/${this.getCateId}/attributes`,
-            {
-              params: {sel: 'many'}
-            }
+            `http://localhost:8085/good/attribute/0/${this.getCateId}/list`,
         )
-        if (res.meta.status !== 200) {
-          return this.$message.error('获取动态参数列表失败！')
+        if (!res.status) {
+          return this.$message.error(res.meta.message||res.message)
         }
         res.data.forEach(item => {
-          item.attr_vals =
-              item.attr_vals.length === 0 ? [] : item.attr_vals.split(' ')
+          item.value =
+              item.value.length === 0 ? [] : item.value.split(' ')
         })
         this.manyTableData = res.data
       } else if (this.activeIndex === '2') {
         const {data: res} = await this.$http.get(
-            `categories/${this.getCateId}/attributes`,
-            {
-              params: {sel: 'only'}
-            }
+            `http://localhost:8085/good/attribute/1/${this.getCateId}/list`,
         )
-        if (res.meta.status !== 200) {
-          return this.$message.error('获取动态参数列表失败！')
+        if (!res.status) {
+          return this.$message.error(res.meta.message||res.message)
         }
         this.onlyTableData = res.data
       }
@@ -267,23 +261,23 @@ export default {
         const form = _.cloneDeep(this.addForm)
         form.goodCat = form.goodCat.join(',')
 
-        // 处理动态参数
+        // 处理参数
         this.manyTableData.forEach(item => {
           const newInfo = {
-            attrId: item.attr_id,
-            attrValue: item.attr_vals.join(' ')
+            attrId: item.id,
+            attrValue: item.value.join(' ')
           }
           this.addForm.attrs.push(newInfo)
         })
-        // 处理静态属性
+        // 处理属性
         this.onlyTableData.forEach(item => {
           const newInfo = {
-            attrId: item.attr_id,
-            attrValue: item.attr_vals
+            attrId: item.id,
+            attrValue: item.value
           }
           this.addForm.attrs.push(newInfo)
         })
-        // form.attrs = this.addForm.attrs
+        form.attrs = this.addForm.attrs
         // 发起请求添加商品
         // 商品名称必须是唯一的
         const {data: res} = await this.$http.post('http://localhost:8085/good/addGoodInfo', form)
