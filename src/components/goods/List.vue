@@ -19,10 +19,16 @@
         </el-col>
       </el-row>
       <!-- 表格数据 -->
-      <el-table :data="goodsList" border stripe>
+      <el-table :data="goodsList" border stripe :default-sort="{prop: 'createTime', order: 'descending'}" >
         <el-table-column type="index"></el-table-column>
-        <el-table-column label="商品名称" prop="goodName"></el-table-column>
-        <el-table-column label="商品价格(元)" prop="goodPrice.price" width="100px"></el-table-column>
+        <el-table-column label="商品名称" prop="goodName" show-overflow-tooltip></el-table-column>
+        <el-table-column label="商品价格(元)" prop="goodPrice.price"></el-table-column>
+        <el-table-column label="商品介绍"  show-overflow-tooltip type="expand">
+          <template slot-scope="props">
+            <label v-html="props.row.goodDetail.goodIntroduce">
+          </label>
+          </template>
+        </el-table-column>
         <el-table-column label="商品数量" prop="stoke" width="70px"></el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="140px">
           <template slot-scope="scope">{{ scope.row.createTime | dataFormat }}</template>
@@ -80,7 +86,7 @@ export default {
     async getGoodsList() {
       const {data, status} = await this.$http.post('http://localhost:8085/good/page', {
         goodName: this.queryInfo.query,
-        queryType:"like",//模糊查询
+        queryType: "like",//模糊查询
         page: this.queryInfo.page
       })
       console.log(data)
@@ -121,6 +127,11 @@ export default {
     },
     goAddPage() {
       this.$router.push('/goods/add')
+    }
+  },
+  computed: {
+    introduce() {
+      return this.showGoodIntroduce()
     }
   }
 }

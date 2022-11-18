@@ -168,8 +168,8 @@ export default {
   },
   computed: {
     getCateId() {
-      if (this.addForm.goodCat.length === 3) {
-        return this.addForm.goodCat[2]
+      if (this.addForm.goodCat.length >0) {
+        return this.addForm.goodCat[this.addForm.goodCat.length-1]
       }
       return null
     }

@@ -8,8 +8,8 @@
     </el-breadcrumb>
     <!-- 卡片视图 -->
     <el-card>
-      <!-- 警告区域 -->
-      <el-alert :closable="false" show-icon title="注意：只允许为第三级分类设置相关参数！" type="warning"></el-alert>
+<!--      &lt;!&ndash; 警告区域 &ndash;&gt;-->
+<!--      <el-alert :closable="false" show-icon title="注意：只允许为第三级分类设置相关参数！" type="warning"></el-alert>-->
 
       <!-- 选择商品分类区域 -->
       <el-row class="cat_opt">
@@ -247,12 +247,12 @@ export default {
   computed: {
     //   按钮需要被禁用返回true, 否则返回false
     isBtnDisabled() {
-      return this.selectedCateKeys.length !== 3;
+      return this.selectedCateKeys.length ===0;
     },
     // 当前选中的三级分类Id
     getCateId() {
-      if (this.selectedCateKeys.length === 3) {
-        return this.selectedCateKeys[2]
+      if (this.selectedCateKeys.length >0) {
+        return this.selectedCateKeys[this.selectedCateKeys.length-1]
       }
       return null
     },
@@ -290,7 +290,7 @@ export default {
     async getParamsData() {
       // 只允许选择三级分类：
       // 通过数组的长度判断
-      if (this.selectedCateKeys.length !== 3) {
+      if (this.selectedCateKeys.length===0) {
         this.selectedCateKeys = []
         // 清空表格数据
         this.manyTableData = []
@@ -304,7 +304,6 @@ export default {
       if (!res.status) {
         return this.$message.error('获取参数列表失败！')
       }
-      console.log(res)
       res.data.forEach(item => {
         //   通过三元表达式判断value是否为空
         item.value = item.value ? item.value.split(' ') : []
