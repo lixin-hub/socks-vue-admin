@@ -13,8 +13,7 @@ import Cate from '../components/goods/Cate.vue'
 import Params from '../components/goods/Params.vue'
 import GoodsList from '../components/goods/List.vue'
 import Add from '../components/goods/Add.vue'
-//
-// // import Order from '../components/order/Order.vue'
+import Order from '../components/order/Order.vue'
 // // import Report from '../components/report/Report.vue'
 //
 // // 路由懒加载
@@ -52,7 +51,7 @@ const routes = [
       { path: '/params', component: Params },
       { path: '/goods', component: GoodsList },
       { path: '/goods/add', component: Add },
-      // { path: '/orders', component: Order },
+      { path: '/orders', component: Order },
       // { path: '/reports', component: Report }
     ]
   }

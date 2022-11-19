@@ -89,7 +89,6 @@ export default {
         queryType: "like",//模糊查询
         page: this.queryInfo.page
       })
-      console.log(data)
       if (status !== 200) {
         return this.$message.error('获取商品列表失败！')
       }
