@@ -351,7 +351,7 @@ export default {
               id: this.editCateForm.id,
               name: this.editCateForm.name,
               parent: this.editCateForm.parent,
-              note: this.editCateForm.not,
+              note: this.editCateForm.note,
               level: this.editCateForm.level
             })
         if (!res.status) return this.$message.error('更新分类名失败！')
