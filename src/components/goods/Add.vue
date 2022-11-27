@@ -177,7 +177,7 @@ export default {
   methods: {
     // 获取商品分类数据列表
     async getCateList() {
-      const {data: res} = await this.$http.post('http://localhost:8085/good/category/page', {
+      const {data: res} = await this.$http.post('/good/category/page', {
         page: {
           size: 1000,
           current: 1
@@ -207,7 +207,7 @@ export default {
       // 访问动态参数面板
       if (this.activeIndex === '1') {
         const {data: res} = await this.$http.get(
-            `http://localhost:8085/good/attribute/0/${this.getCateId}/list`,
+            `/good/attribute/0/${this.getCateId}/list`,
         )
         if (!res.status) {
           return this.$message.error(res.meta.message||res.message)
@@ -219,7 +219,7 @@ export default {
         this.manyTableData = res.data
       } else if (this.activeIndex === '2') {
         const {data: res} = await this.$http.get(
-            `http://localhost:8085/good/attribute/1/${this.getCateId}/list`,
+            `/good/attribute/1/${this.getCateId}/list`,
         )
         if (!res.status) {
           return this.$message.error(res.meta.message||res.message)
@@ -280,7 +280,7 @@ export default {
         form.attrs = this.addForm.attrs
         // 发起请求添加商品
         // 商品名称必须是唯一的
-        const {data: res} = await this.$http.post('http://localhost:8085/good/addGoodInfo', form)
+        const {data: res} = await this.$http.post('/good/addGoodInfo', form)
         if (!res.status) {
           console.log(res.data)
           return this.$message.error(res.message)

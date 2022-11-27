@@ -22,7 +22,7 @@
             <!-- 一级菜单的模板区域 -->
             <template slot="title">
               <i :class="iconObj[item.id]"></i>
-              <span>{{ item.authName}}</span>
+              <span>{{ item.name}}</span>
             </template>
             <!-- 二级菜单 -->
             <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id" @click="saveNavState('/' + subItem.path)">
@@ -31,7 +31,7 @@
               <!-- 二级菜单的模板区域 -->
               <template slot="title">
                 <i class="el-icon-menu"></i>
-                <span>{{ subItem.authName}}</span>
+                <span>{{ subItem.name}}</span>
               </template>
             </el-menu-item>
           </el-submenu>
@@ -62,12 +62,17 @@ export default {
       // 默认不折叠
       isCollapse: false,
       // 被激活导航地址
-      activePath: ''
+      activePath: '',
+      userId:''
     }
   },
   created () {
-    this.getMenuList()
     this.activePath = window.sessionStorage.getItem('activePath')
+    this.userId = window.sessionStorage.getItem('userId')
+    if (!this.userId){
+      this.$router.push("login")
+    }
+    this.getMenuList()
   },
   methods: {
     logout () {
@@ -77,8 +82,9 @@ export default {
     },
     // 获取请求菜单
     async getMenuList () {
-      const { data: res } = await this.$http.get('menus')
-      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      console.log("获取请求菜单")
+      const { data: res } = await this.$http.get(`/auth/menus/${this.userId}`)
+      if (!res.status) return this.$message.error(res.message)
       this.menuList = res.data
       // console.log(res)
     },

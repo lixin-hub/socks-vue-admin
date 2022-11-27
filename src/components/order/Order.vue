@@ -185,7 +185,7 @@ export default {
   methods: {
     //获取订单列表
     async getOrderList() {
-      const {data: res} = await this.$http.post('http://localhost:8086/order/page', {
+      const {data: res} = await this.$http.post('/order/page', {
         page: this.queryInfo
       })
       if (!res.status) {
@@ -204,7 +204,7 @@ export default {
     //获取订单关联信息
     async getGoodsList(row) {
       console.log(row)
-      const {data: res} = await this.$http.get(`http://localhost:8086/order/goods/${row.id}`)
+      const {data: res} = await this.$http.get(`/order/goods/${row.id}`)
       if (!res.status) {
         return this.$message.error(res.message)
       }
@@ -267,7 +267,7 @@ export default {
       })
       let detailAddr= this.addressForm.detailAddr;
       // eslint-disable-next-line no-unused-vars
-      const {data: res} = await this.$http.post(`http://localhost:8086/order/update`, {
+      const {data: res} = await this.$http.post(`/order/update`, {
         id: this.orderRow.id,
         address,
         detailAddr: detailAddr,

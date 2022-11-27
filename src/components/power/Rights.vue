@@ -284,7 +284,7 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除！')
       }
-      const {data: res} = await this.$http.get('http://localhost:8082/sys/perm/delete/' + id)
+      const {data: res} = await this.$http.get('/sys/perm/delete/' + id)
       if (!res.status) {
         return this.$message.error('删除权限失败！')
       }
@@ -294,7 +294,7 @@ export default {
     },
     // 显示编辑对话框
     async showEditPermissionDialog(id) {
-      const {data: res} = await this.$http.get('http://localhost:8082/sys/perm/selectById/' + id)
+      const {data: res} = await this.$http.get('/sys/perm/selectById/' + id)
       if (!res.status) return this.$message.error('获取权限失败！')
       this.editPermissionForm = res.data
       let page = await this.getPermissionTreePage( {
@@ -317,7 +317,7 @@ export default {
     eidtPermission() {
       this.$refs.editPermissionFormRef.validate(async valid => {
         if (!valid) return
-        const {data: res} = await this.$http.post('http://localhost:8082/sys/perm/updateById',
+        const {data: res} = await this.$http.post('/sys/perm/updateById',
             this.editPermissionForm)
         if (!res.status) return this.$message.error('更新失败！')
         this.$message.success('更新成功！')
@@ -328,7 +328,7 @@ export default {
     async addPermission() {
       this.$refs.addPermissionFormRef.validate(async valid => {
         if (!valid) return
-        const {data: res} = await this.$http.post('http://localhost:8082/sys/perm/insert', this.addPermissionForm)
+        const {data: res} = await this.$http.post('/sys/perm/insert', this.addPermissionForm)
         if (!res.status) {
           return this.$message.error('添加权限失败！')
         }
@@ -357,7 +357,7 @@ export default {
     },
     async getPermissionTreePage(page) {
       let parent = '0'
-      const {data: res} = await this.$http.post('http://localhost:8082/sys/perm/tree', {
+      const {data: res} = await this.$http.post('/sys/perm/tree', {
         parent,
         page
       })

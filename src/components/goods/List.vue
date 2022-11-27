@@ -84,7 +84,7 @@ export default {
   methods: {
     // 根据分页获取对应的商品列表
     async getGoodsList() {
-      const {data, status} = await this.$http.post('http://localhost:8085/good/page', {
+      const {data, status} = await this.$http.post('/good/page', {
         goodName: this.queryInfo.query,
         queryType: "like",//模糊查询
         page: this.queryInfo.page
@@ -117,7 +117,7 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除！')
       }
-      const {data: res} = await this.$http.get('http://localhost:8085/good/delete/' + id)
+      const {data: res} = await this.$http.get('/good/delete/' + id)
       if (!res.status) {
         return this.$message.error(res.message)
       }

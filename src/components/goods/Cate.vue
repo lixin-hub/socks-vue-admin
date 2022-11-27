@@ -299,7 +299,7 @@ export default {
     addCate() {
       this.$refs.addCateFormRef.validate(async valid => {
         if (!valid) return
-        const {data: res} = await this.$http.post('http://localhost:8085/good/category/insert', this.addCateForm)
+        const {data: res} = await this.$http.post('/good/category/insert', this.addCateForm)
         if (!res.status) {
           return this.$message.error('添加分类失败！')
         }
@@ -326,7 +326,7 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除！')
       }
-      const {data: res} = await this.$http.get('http://localhost:8085/good/category/delete/' + id)
+      const {data: res} = await this.$http.get('/good/category/delete/' + id)
       if (!res.status) {
         return this.$message.error('删除商品分类失败！')
       }
@@ -335,7 +335,7 @@ export default {
     },
     // 显示编辑对话框
     async showEditCateDialog(id) {
-      const {data: res} = await this.$http.get('http://localhost:8085/good/category/' + id)
+      const {data: res} = await this.$http.get('/good/category/' + id)
       if (!res.status) return this.$message.error('获取分类失败！')
       await this.getParentCateList()
       this.editCateForm = res.data
@@ -346,7 +346,7 @@ export default {
     eidtCate() {
       this.$refs.editCateFormRef.validate(async valid => {
         if (!valid) return
-        const {data: res} = await this.$http.post('http://localhost:8085/good/category/updateById',
+        const {data: res} = await this.$http.post('/good/category/updateById',
             {
               id: this.editCateForm.id,
               name: this.editCateForm.name,

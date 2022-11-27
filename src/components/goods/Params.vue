@@ -266,7 +266,7 @@ export default {
   methods: {
     //   获取所有的商品分类列表
     async getCateList() {
-      const {data: res} = await this.$http.post('http://localhost:8085/good/category/page', {
+      const {data: res} = await this.$http.post('/good/category/page', {
         page: {
           size: 1000,
           current: 1
@@ -299,7 +299,7 @@ export default {
       }
       //   根据所选分类的Id,和当前面板的参数, 获取对应的参数
       const {data: res} = await this.$http.get(
-          `http://localhost:8085/good/attribute/${this.activityType}/${this.getCateId}/list`,
+          `/good/attribute/${this.activityType}/${this.getCateId}/list`,
       )
       if (!res.status) {
         return this.$message.error('获取参数列表失败！')
@@ -328,7 +328,7 @@ export default {
       this.$refs.addFromRef.validate(async valid => {
         if (!valid) return
         const {data: res} = await this.$http.post(
-            "http://localhost:8085/good/attribute/insert",
+            "/good/attribute/insert",
             {
               name: this.addFrom.name,
               attrType: this.activityType,
@@ -346,7 +346,7 @@ export default {
     // 显示编辑对话框
     async showEditDialog(attrId) {
       const {data: res} = await this.$http.get(
-          `http://localhost:8085/good/attribute/${attrId}`
+          `/good/attribute/${attrId}`
       )
       if (!res.status) {
         return this.$message.error('获取分类失败！')
@@ -363,7 +363,7 @@ export default {
       this.$refs.editFromRef.validate(async valid => {
         if (!valid) return
         const {data: res} = await this.$http.post(
-            `http://localhost:8085/good/attribute/updateById`,
+            `/good/attribute/updateById`,
             {
               id:this.editFrom.id,
               name: this.editFrom.name,
@@ -393,7 +393,7 @@ export default {
         return this.$message.info('已取消删除！')
       }
       const {data: res} = await this.$http.get(
-          `http://localhost:8085/good/attribute/delete/${attrId}`
+          `/good/attribute/delete/${attrId}`
       )
       if (!res.status) {
         return this.$message.error('删除参数失败！')
@@ -418,7 +418,7 @@ export default {
     // 将对value（Tag） 的操作 保存到数据库
     async saveAttrVals(row) {
       const {data: res} = await this.$http.post(
-          "http://localhost:8085/good/attribute/insert",
+          "/good/attribute/insert",
           {
             id: row.id,
             name: row.name,
