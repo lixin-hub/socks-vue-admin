@@ -25,8 +25,8 @@
         <el-table-column label="商品价格(元)" prop="goodPrice.price"></el-table-column>
         <el-table-column label="商品介绍"  show-overflow-tooltip type="expand">
           <template slot-scope="props">
-            <label v-html="props.row.goodDetail.goodIntroduce">
-          </label>
+            <label v-html="props.row.goodDetail.goodIntroduce"></label>
+            <img class="introduce-img"  v-for="pic in props.row.goodPics" :key="pic.goodId" :src="'http://42.193.22.5:9000/static/'+pic.goodPic" alt="">
           </template>
         </el-table-column>
         <el-table-column label="商品数量" prop="stoke" width="70px"></el-table-column>
@@ -137,4 +137,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.introduce-img{
+  height: 100px;
+}
 </style>

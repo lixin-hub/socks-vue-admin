@@ -21,7 +21,7 @@ import 'quill/dist/quill.bubble.css'
 
 Vue.config.productionTip = false
 // 配置请求根路径
-axios.defaults.baseURL = 'http://localhost:10010/'
+axios.defaults.baseURL = 'http://42.193.22.5:10010/'
 // 挂在到Vue实例，后面可通过this调用
 Vue.prototype.$http = axios
 // 组件全局注册 表格树

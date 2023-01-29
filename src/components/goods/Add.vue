@@ -77,6 +77,7 @@
                     <el-tab-pane label="商品图片" name="3">
                       <!-- action: 图片上传的API接口地址 -->
                       <el-upload
+                          :limit="20"
                           :action="uploadURL"
                           :on-preview="handlePreview"
                           :on-remove="handleRemove"
@@ -119,7 +120,7 @@ export default {
         // 商品所属分类数组
         goodCat: [],
         // 图片的数组
-        pic: "",
+        pics: [],
         // 商品详情描述
         goodsIntroduce: '',
         attrs: []
@@ -153,7 +154,7 @@ export default {
       // 静态属性列表数据
       onlyTableData: [],
       // 图片上传地址
-      uploadURL: 'http://127.0.0.1:8887/api/private/v1/upload',
+      uploadURL: 'http://42.193.22.5:10010/file/upload/static',
       // 图片上传组件的请求对象
       headerObj: {
         Authorization: window.sessionStorage.getItem('token')
@@ -243,10 +244,8 @@ export default {
     },
     // 监听图片上传成功事件
     handleSuccess(response) {
-      // 1.拼接得到一个图片信息对象 临时路径
-      const picInfo = {pic: response.data.tmp_path}
-      // 2.将图片信息对象，push到pics数组中
-      this.addForm.pics.push(picInfo)
+      this.addForm.pics.push(response.ossFilePath)
+      console.log(this.addForm.pics)
     },
     // 添加商品
     addGoods() {
